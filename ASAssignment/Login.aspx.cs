@@ -122,7 +122,7 @@ namespace ASAssignment
         }
         protected string getDBHash(string userid)
         {
-            string h = null;
+            string hash = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
             string sql = "select PasswordHash FROM Account WHERE Email=@USERID";
             SqlCommand command = new SqlCommand(sql, connection);
@@ -139,8 +139,8 @@ namespace ASAssignment
                         {
                             if (reader["PasswordHash"] != DBNull.Value)
                             {
-                                h = reader["PasswordHash"].ToString();
-                                System.Diagnostics.Debug.WriteLine("Wrong get hash " + h);
+                                hash = reader["PasswordHash"].ToString();
+                                System.Diagnostics.Debug.WriteLine("Wrong get hash " + hash);
                             }
                         }
                         else
@@ -156,11 +156,11 @@ namespace ASAssignment
                 throw new Exception(ex.ToString());
             }
             finally { connection.Close(); }
-            return h;
+            return hash;
         }
         protected string getDBSalt(string userid)
         {
-            string s = null;
+            string salt = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
             string sql = "select Passwordsalt FROM Account WHERE Email=@USERID";
             SqlCommand command = new SqlCommand(sql, connection);
@@ -177,8 +177,8 @@ namespace ASAssignment
                         {
                             if (reader["Passwordsalt"] != DBNull.Value)
                             {
-                                s = reader["Passwordsalt"].ToString();
-                                System.Diagnostics.Debug.WriteLine("wrong getdbsalt " + s);
+                                salt = reader["Passwordsalt"].ToString();
+                                System.Diagnostics.Debug.WriteLine("wrong getdbsalt " + salt);
                             }
                         }
                     }
@@ -189,7 +189,7 @@ namespace ASAssignment
                 throw new Exception(ex.ToString());
             }
             finally { connection.Close(); }
-            return s;
+            return salt;
         }
 
         public bool validateCaptcha()
