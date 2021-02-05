@@ -19,7 +19,6 @@ namespace ASAssignment
     {
         string MYDBConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
 
-
         public class MyObject
         {
             public string success { get; set; }
@@ -60,8 +59,8 @@ namespace ASAssignment
                 if (validateCaptcha())
                 {
                     System.Diagnostics.Debug.WriteLine("ERROR HERE 2");
-                    string pwd = Login_Password.Text.ToString().Trim();
-                    string userid = Email_Login.Text.ToString().Trim();
+                    string password = HttpUtility.HtmlEncode(Login_Password.Text.ToString().Trim());
+                    string userid = HttpUtility.HtmlEncode(Email_Login.Text.ToString().Trim());
                     SHA512Managed hashing = new SHA512Managed();
                     string dbHash = getDBHash(userid);
                     string dbSalt = getDBSalt(userid);
@@ -78,8 +77,8 @@ namespace ASAssignment
                                 if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
                                 {
                                     System.Diagnostics.Debug.WriteLine("Wrong 2");
-                                    string pwdWithSalt = pwd + dbSalt;
-                                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                                    string passwordWithSalt = password + dbSalt;
+                                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(passwordWithSalt));
                                     string userHash = Convert.ToBase64String(hashWithSalt);
                                     if (userHash.Equals(dbHash))
                                     {
@@ -198,8 +197,7 @@ namespace ASAssignment
             bool result = true;
             string captchaResponse = Request.Form["g-recaptcha-response"];
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create
-                (" https://www.google.com/recaptcha/api/siteverify?secret=6LdHhiUaAAAAAAU2LzudU3F596RM7viycpUgC5Dq &response=" + captchaResponse);
-            //6Lf1e-QZAAAAAKl4rh7eojWK5zTD95W0MOVe3wsk secret v3
+                (" https://www.google.com/recaptcha/api/siteverify?secret=6Lf-jkUaAAAAAFoeJgM6btnN8JUtj3FGgWMnCu_1 &response=" + captchaResponse);
             try
             {
                 using (WebResponse wResponse = req.GetResponse())

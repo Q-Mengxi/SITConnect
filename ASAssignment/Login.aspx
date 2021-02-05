@@ -12,7 +12,7 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
     <link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet"/>
 
-    <script src="https://www.google.com/recaptcha/api.js?render=6LdHhiUaAAAAACk-3V2TACdy9H-5hIyGilEwAF4x"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lf-jkUaAAAAAN15LC9U0D8LYD354fhmM6w540Ah"></script>
 </head>
 <body>
     
@@ -37,7 +37,7 @@
     
     <script>
         grecaptcha.ready(function () {
-            grecaptcha.execute('6LdHhiUaAAAAACk-3V2TACdy9H-5hIyGilEwAF4x', { action: 'Login' }).then(function (token) {
+            grecaptcha.execute('6Lf-jkUaAAAAAN15LC9U0D8LYD354fhmM6w540Ah', { action: 'Login' }).then(function (token) {
                 document.getElementById("g-recaptcha-response").value = token;
             });
         });

@@ -118,42 +118,9 @@ namespace ASAssignment
             }
         }
 
-
-        //protected string checkemail(string id)
-        //{
-        //    string accountid = "";
-        //    SqlConnection connection = new SqlConnection(MYDBConnectionString);
-        //    string sql = "select Id FROM Account WHERE Email=@paraemail";
-        //    SqlCommand command = new SqlCommand(sql, connection);
-        //    command.Parameters.AddWithValue("@paraemail", id);
-        //    try
-        //    {
-        //        connection.Open();
-        //        using (SqlDataReader reader = command.ExecuteReader())
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                if (reader["Id"] != null)
-        //                {
-        //                    if (reader["Id"] != DBNull.Value)
-        //                    {
-        //                        accountid = reader["Id"].ToString();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.ToString());
-        //    }
-        //    finally { connection.Close(); }
-        //    return accountid;
-        //}
-    
         private string checkemail(string email)
         {
-            string a = null;
+            string emaila = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
             string sql = "select Email from Account where Email=@paraEmail";
             SqlCommand command = new SqlCommand(sql, connection);
@@ -169,7 +136,7 @@ namespace ASAssignment
                         {
                             if (reader["Email"] != DBNull.Value)
                             {
-                                a = reader["Email"].ToString();
+                                emaila = reader["Email"].ToString();
                             }
                         }
                     }
@@ -180,7 +147,7 @@ namespace ASAssignment
                 throw new Exception(ex.ToString());
             }
             finally { connection.Close(); }
-            return a;
+            return emaila;
         }
 
         public void createAccount()
@@ -195,13 +162,13 @@ namespace ASAssignment
                             {
                                 System.Diagnostics.Debug.WriteLine(Firstname.Text.Trim());
                                 cmd.CommandType = CommandType.Text;
-                                cmd.Parameters.AddWithValue("@paraFname", Firstname.Text.Trim());
-                                cmd.Parameters.AddWithValue("@paraLname", Lastname.Text.Trim());
+                                cmd.Parameters.AddWithValue("@paraFname", HttpUtility.HtmlEncode(Firstname.Text.Trim()));
+                                cmd.Parameters.AddWithValue("@paraLname", HttpUtility.HtmlEncode(Lastname.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@paraCcno", encryptData(Ccno.Text.Trim()));
-                                cmd.Parameters.AddWithValue("@paraEmail", Emaila.Text.Trim());
+                                cmd.Parameters.AddWithValue("@paraEmail", HttpUtility.HtmlEncode(Emaila.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@paraPasswordsalt", salt);
                                 cmd.Parameters.AddWithValue("@paraPasswordHash", finalHash);
-                                cmd.Parameters.AddWithValue("@paraDateOfBirth", Dateob.Text.Trim());
+                                cmd.Parameters.AddWithValue("@paraDateOfBirth", HttpUtility.HtmlEncode(Dateob.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@paraIV", Convert.ToBase64String(IV));
                                 cmd.Parameters.AddWithValue("@paraKey", Convert.ToBase64String(Key));
                                 cmd.Parameters.AddWithValue("@paraAttempts", att);
@@ -231,18 +198,15 @@ namespace ASAssignment
                 {
                     if (checkPassword(tb_password.Text))
                     {
-                        //string pwd = get value from your Textbox
-                        string pwd = tb_password.Text.ToString().Trim(); ;
-                        //Generate random "salt"
+                        string password = tb_password.Text.ToString().Trim(); ;
                         RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
                         byte[] saltByte = new byte[8];
-                        //Fills array of bytes with a cryptographically strong sequence of random values.
                         rng.GetBytes(saltByte);
                         salt = Convert.ToBase64String(saltByte);
                         SHA512Managed hashing = new SHA512Managed();
-                        string pwdWithSalt = pwd + salt;
-                        byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwd));
-                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                        string saltedpassword = password + salt;
+                        byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(password));
+                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(saltedpassword));
                         finalHash = Convert.ToBase64String(hashWithSalt);
                         RijndaelManaged cipher = new RijndaelManaged();
                         cipher.GenerateKey();
@@ -274,10 +238,8 @@ namespace ASAssignment
                 cipher.IV = IV;
                 cipher.Key = Key;
                 ICryptoTransform encryptTransform = cipher.CreateEncryptor();
-                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
                 byte[] plainText = Encoding.UTF8.GetBytes(data);
-                cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
-               plainText.Length);
+                cipherText = encryptTransform.TransformFinalBlock(plainText, 0, plainText.Length);
             }
             catch (Exception ex)
             {
